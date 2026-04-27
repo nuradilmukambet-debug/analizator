@@ -8,110 +8,60 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400&family=Playfair+Display:italic&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --accent: #ffffff;
-            --bg: #0a0a0a;
-        }
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            background: var(--bg);
-            color: var(--accent);
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
+        :root { --accent: #ffffff; --bg: #0a0a0a; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: var(--accent); font-family: 'Inter', sans-serif; overflow: hidden; }
 
-        /* Видео во весь экран */
-        #video-wrapper {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; 
-            background: #000;
-        }
+        /* Контейнер видео */
+        #video-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: #000; }
         video { 
-            width: 100%; height: 100%; 
-            object-fit: cover; 
-            filter: grayscale(0.8) contrast(1.2) brightness(0.7);
+            width: 100%; height: 100%; object-fit: cover; 
+            filter: grayscale(0.7) contrast(1.1) brightness(0.6); 
+            display: block;
         }
 
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.8) 100%);
-            pointer-events: none; /* Чтобы клики проходили сквозь оверлей на кнопку */
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%);
+            z-index: 10; pointer-events: none;
         }
 
-        header { padding: 30px; letter-spacing: 4px; font-weight: 200; text-transform: uppercase; font-size: 0.8rem; text-align: center; }
-
+        header { padding: 30px; letter-spacing: 4px; font-weight: 200; text-transform: uppercase; font-size: 0.7rem; text-align: center; }
         .main-ui { text-align: center; pointer-events: auto; padding: 20px; }
 
-        /* Кнопка Анализа */
         .analyze-trigger {
-            background: rgba(255,255,255,0.05); 
-            border: 1px solid var(--accent); 
-            color: var(--accent);
-            padding: 18px 40px; font-size: 12px; letter-spacing: 3px;
-            cursor: pointer; transition: all 0.4s; 
-            backdrop-filter: blur(15px);
-            border-radius: 4px;
-            text-transform: uppercase;
-            margin-bottom: 50px;
-        }
-        .analyze-trigger:active {
-            background: var(--accent); color: var(--bg); transform: scale(0.95);
+            background: rgba(255,255,255,0.1); border: 1px solid var(--accent); color: var(--accent);
+            padding: 18px 40px; font-size: 11px; letter-spacing: 3px;
+            cursor: pointer; backdrop-filter: blur(10px); border-radius: 2px;
+            text-transform: uppercase; margin-bottom: 60px;
         }
 
-        /* Текст стихов */
         #poem-display {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem; line-height: 1.5;
-            max-width: 90%; margin: 0 auto 40px auto;
-            opacity: 0; transform: translateY(15px); transition: all 0.8s;
-            text-shadow: 0 0 15px rgba(0,0,0,0.5);
+            font-family: 'Playfair Display', serif; font-size: 1.3rem; line-height: 1.6;
+            max-width: 85%; margin: 0 auto 30px auto; opacity: 0; transition: all 0.8s;
         }
-        #poem-display.show { opacity: 1; transform: translateY(0); }
+        #poem-display.show { opacity: 1; }
 
-        .chat-sidebar {
-            padding: 30px; font-size: 10px; color: #666;
-            text-transform: uppercase; line-height: 1.8;
-            letter-spacing: 1px;
-        }
-
-        .scan-line {
-            position: absolute; top: 0; left: 0; width: 100%; height: 1px;
-            background: rgba(255,255,255,0.3);
-            animation: moveScan 3s infinite linear;
-            box-shadow: 0 0 10px rgba(255,255,255,0.2);
-        }
-        @keyframes moveScan { 0% { top: 0; } 100% { top: 100%; } }
-
-        /* Лоадер при загрузке модели */
-        #loader {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 10px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5;
-        }
+        .chat-sidebar { padding: 30px; font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+        #loader { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; letter-spacing: 2px; opacity: 0.6; z-index: 20; }
     </style>
 </head>
 <body>
 
     <div id="video-wrapper">
         <video id="webcam" autoplay muted playsinline></video>
-        <div class="scan-line"></div>
     </div>
 
-    <div id="loader">Инициализация сознания...</div>
+    <div id="loader">СОЕДИНЕНИЕ С НООСФЕРОЙ...</div>
 
     <div class="overlay">
-        <header>Aitmatov / Digital Echo</header>
-
+        <header>Aitmatov / Consciousness v.1.0</header>
         <div class="main-ui">
             <div id="poem-display"></div>
             <button class="analyze-trigger" id="btn">АНАЛИЗИРОВАТЬ</button>
         </div>
-
         <div class="chat-sidebar">
-            [SYSTEM]: Neural Link Active <br>
-            [STATUS]: Scanning Reality <br>
-            [MODE]: Read-Only Interface
+            [SYS]: LINK ESTABLISHED <br> [LOC]: NARYN, KG <br> [MODE]: OBSERVER
         </div>
     </div>
 
@@ -122,76 +72,58 @@
         const btn = document.getElementById('btn');
         let model;
 
-        // Библиотека стихов в стиле Айтматова
         const library = {
             'bottle': "«И дольше века длится миг...»\nСтекло зарыто в прах, как древний крик.\nТы — пустота, забытая в степи,\nОстанься здесь, но сердце не слепи.",
-            'plastic': "Лоскут бесплодный, призрак неживой,\nЛетит над выжженной кочевником травой.\nНет в нем души, лишь холод и петля,\nО чем молчишь, уставшая земля?",
-            'cup': "Чаша испита. Треснул гранит.\nПамять о предках земля сохранит.\nГлина к глине, а мусор — к беде,\nСлезы кочевника в горькой воде.",
-            'multiple': "Мир слишком замусорен образами.\nОставь лишь одну вещь перед моим взором,\nЧтобы я смог услышать ее голос.",
-            'empty': "Степь пуста. Только ветер и вечность.\nНи тени, ни следа, ни брошенного слова."
+            'plastic': "Бесплодный дух, прозрачная петля,\nТобою душится великая земля.\nЛетишь над степью призраком немым,\nСтановясь прахом, серым и чужим.",
+            'cup': "Чаша разбита. Треснул гранит.\nПамять кочевника небо хранит.\nГлина вернется в сырую постель,\nМусор закрутит веков метель."
         };
 
-        async function init() {
+        async function startCamera() {
             try {
-                // Загружаем модель
-                model = await cocoSsd.load();
-                loader.style.display = 'none';
-
-                // Запрашиваем камеру
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "environment" }, // Задняя камера
+                    video: { facingMode: "environment" }, 
                     audio: false 
                 });
-                
                 video.srcObject = stream;
-                
-                // Принудительно запускаем видео
-                video.onloadedmetadata = () => {
-                    video.play();
-                };
-
-            } catch (err) {
-                console.error(err);
-                loader.innerText = "Ошибка доступа к камере";
+                video.onloadedmetadata = () => video.play();
+            } catch (e) {
+                console.error("Camera error:", e);
+                loader.innerText = "ДОСТУП ЗАБЛОКИРОВАН";
             }
         }
 
-        async function analyzeScene() {
-            if (!model) return;
+        async function init() {
+            model = await cocoSsd.load();
+            loader.style.display = 'none';
+            await startCamera();
+        }
 
+        async function analyze() {
+            // Принудительный старт видео, если оно зависло
+            if (video.paused) video.play();
+            
             poemBox.classList.remove('show');
-            btn.innerText = "СКАНИРУЮ...";
+            btn.innerText = "СКАНИРОВАНИЕ...";
 
             const predictions = await model.detect(video);
             
             setTimeout(() => {
-                if (predictions.length > 3) {
-                    poemBox.innerText = library.multiple;
-                } else if (predictions.length > 0) {
-                    const found = predictions[0].class;
-                    
-                    if (found === 'bottle') {
-                        poemBox.innerText = library.bottle;
-                    } else if (found === 'handbag' || found === 'backpack') {
-                        poemBox.innerText = library.plastic;
-                    } else if (found === 'cup') {
-                        poemBox.innerText = library.cup;
-                    } else {
-                        poemBox.innerText = `Вижу ${found}...\n\nОбрывок мысли, брошенный в песок,\nЗачем ты здесь, зачем ты одинок?`;
-                    }
+                if (predictions.length > 0) {
+                    const obj = predictions[0].class;
+                    if (obj === 'bottle') poemBox.innerText = library.bottle;
+                    else if (obj === 'cup') poemBox.innerText = library.cup;
+                    else if (obj === 'bag') poemBox.innerText = library.plastic;
+                    else poemBox.innerText = `Вижу пред собой ${obj}.\n\nЧужое здесь, не вечное, земное.\nЗабытое, ненужное, немое.`;
                 } else {
-                    poemBox.innerText = library.empty;
+                    poemBox.innerText = "Степь пуста. Только ветер и вечность.";
                 }
-                
                 poemBox.classList.add('show');
                 btn.innerText = "АНАЛИЗИРОВАТЬ";
-            }, 600);
+            }, 800);
         }
 
-        btn.addEventListener('click', analyzeScene);
-
-        // Запуск при загрузке
-        window.addEventListener('load', init);
+        btn.addEventListener('click', analyze);
+        window.onload = init;
     </script>
 </body>
 </html>
