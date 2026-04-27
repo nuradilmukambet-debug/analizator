@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITMATOV AI | SCANNER</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400&family=Playfair+Display:italic&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #ffffff;
+            --bg: #0a0a0a;
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background: var(--bg);
+            color: var(--accent);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Сканер как фон */
+        #video-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; filter: grayscale(1) contrast(1.2) brightness(0.6);
+        }
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Элементы интерфейса */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+        }
+
+        header { padding: 40px; letter-spacing: 5px; font-weight: 200; text-transform: uppercase; }
+
+        .main-ui { text-align: center; }
+
+        /* Кнопка Анализа */
+        .analyze-trigger {
+            background: none; border: 1px solid var(--accent); color: var(--accent);
+            padding: 20px 60px; font-size: 14px; letter-spacing: 3px;
+            cursor: pointer; transition: all 0.5s; backdrop-filter: blur(10px);
+            border-radius: 2px;
+        }
+        .analyze-trigger:hover {
+            background: var(--accent); color: var(--bg); box-shadow: 0 0 30px rgba(255,255,255,0.4);
+        }
+
+        /* Текст стихов */
+        #poem-display {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem; line-height: 1.4;
+            max-width: 800px; margin: 0 auto 100px auto;
+            opacity: 0; transform: translateY(20px); transition: all 1s;
+        }
+        #poem-display.show { opacity: 1; transform: translateY(0); }
+
+        /* Окно чата (только чтение) */
+        .chat-sidebar {
+            position: fixed; left: 40px; bottom: 40px;
+            width: 300px; font-size: 11px; color: #555;
+            text-transform: uppercase; line-height: 2;
+            border-left: 1px solid #333; padding-left: 20px;
+        }
+
+        /* Визуальный сканер */
+        .scan-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(255,255,255,0.2);
+            animation: moveScan 4s infinite linear;
+        }
+        @keyframes moveScan { 0% { top: 0; } 100% { top: 100%; } }
+    </style>
+</head>
+<body>
+
+    <div id="video-wrapper">
+        <video id="webcam" autoplay muted playsinline></video>
+        <div class="scan-line"></div>
+    </div>
+
+    <div class="overlay">
+        <header>Aitmatov / Consciousness</header>
+
+        <div class="main-ui">
+            <div id="poem-display"></div>
+            <button class="analyze-trigger" onclick="analyzeScene()">АНАЛИЗИРОВАТЬ</button>
+        </div>
+
+        <div class="chat-sidebar">
+            [System]: Browser Neural Link Active... <br>
+            [Status]: Observing Space... <br>
+            [Mode]: Read-Only Interface
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const poemBox = document.getElementById('poem-display');
+        let model;
+
+        async function init() {
+            model = await cocoSsd.load();
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "environment" } 
+            });
+            video.srcObject = stream;
+        }
+
+        const library = {
+            'bottle': "«И дольше века длится миг...»\nСтекло зарыто в прах, как древний крик.\nТы — пустота, забытая в степи,\nОстанься здесь, но сердце не слепи.",
+            'handbag': "Котомка странника в пыли дорог...\nЧто ты несешь? Печаль или зарок?\nВ тебе — весь мир, ненужный и пустой,\nОставленный под вечной синевой.",
+            'cup': "Чаша испита. Треснул гранит.\nПамять о предках земля сохранит.\nГлина к глине, а мусор — к беде,\nСлезы кочевника в горькой воде."
+        };
+
+        async function analyzeScene() {
+            poemBox.classList.remove('show');
+            const predictions = await model.detect(video);
+            
+            setTimeout(() => {
+                if (predictions.length > 3) {
+                    poemBox.innerText = "Мир слишком замусорен образами. Оставь лишь одну вещь перед моим взором.";
+                } else if (predictions.length > 0) {
+                    const item = predictions[0].class;
+                    poemBox.innerText = library[item] || "Обрывок мысли, брошенный в песок...\nЗачем ты здесь, зачем ты одинок?\nЗемля не примет этот странный дар,\nВ душе земли — лишь пепел и пожар.";
+                } else {
+                    poemBox.innerText = "Степь пуста. Только ветер и вечность.";
+                }
+                poemBox.classList.add('show');
+            }, 500);
+        }
+
+        init();
+    </script>
+</body>
+</html>
